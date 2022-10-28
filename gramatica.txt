@@ -1,0 +1,68 @@
+Gramática Analisis Sintáctico
+
+Entrada -> Etiqueta Entrada 
+            | Función Entrada 
+			| Tipo Entrada
+			| Texto Entrada
+			|Estilo Entrada
+		    | e
+Etiqueta->  
+		    | Titulo Etiqueta
+		    | Descripcion Etiqueta
+		    | Contenido Etiqueta
+ 		    | e
+
+Tipo       -> <Tipo> Operacion </Tipo>
+
+
+Operación -> 
+			   |Numero Operación
+			   |<Operación=SUMA> Operación </Operación> Operacion
+			   |<Operación=RESTA> Operación </Operación> Operacion
+			   |<Operación=MULTIPLICACIÓN> Operación </Operación> Operacion
+			   |<Operación=DIVISION> Operación </Operación> Operacion
+			   |<Operación=RAIZ> Operación </Operación> Operacion
+			   |<Operación=POTENCIA> Operación </Operación> Operacion
+			   |<Operación=INVERSO> Operación </Operación> Operacion
+			   |<Operación=SENO> Operación </Operación> Operacion
+			   |<Operación=COSENO> Operación </Operación> Operacion
+			   |<Operación=TANGENTE> Operación </Operación> Operacion
+			   |<Operación=MOD> Operación </Operación> Operacion
+			   |e
+
+Numero -> <Numero> Digito </Numero>
+			   
+
+Texto -> <Texto> Parrafo </Texto>
+
+Parrafo -> Letras Parrafo
+		     |Digito Parrafo
+		     |< Parrafo
+		     |> Parrafo
+		     |= Parrafo
+		     |/ Parrafo
+		     |[ Parrafo
+		     |] Parrafo
+		     | Cadena Parrafo
+			 |e
+
+Función -> <Función = Escribir> etiqueta </Función>
+
+Titulo ->  <Titulo> Letras </Titulo>
+
+Descripcion -> <Descripción> [Letras] </Descripción>
+
+Contenido -> <Contenido> [Letras] </Contenido>
+
+Estilo -> <Estilo> Parametro </Estilo>
+
+Parametro -> <Titulo Color= Letras Tamanio=Digito/> Parametro
+			   |<Descripción Color =Letras Tamanio=Digito/> Parametro
+			   |<Contenido Color =Letras Tamanio=Digito/> Parametro
+			   | e
+
+
+
+
+
+ 
