@@ -1,19 +1,21 @@
 
 
 
-from interfazAreaTexto import interfazAreaTexto
+#from interfazAreaTexto import interfazAreaTexto
 from analizador import analizador
-from os import startfile
-from os import system
-from sintact import analSitac
+#from os import startfile
+#from os import system
+#from sintact import analSitac
 
-# funciones = analizador()
-# txt = funciones.cargarArchivo()
+funciones = analizador()
+txt = funciones.cargarArchivo()
 # result = funciones.analizadorLexico(txt)
 # funciones.reporteTokens(result[0])
 # asm= analSitac(result[0])
 # funciones.reporteErrores(result[1],asm.errores,"")
-
+result = funciones.analizadorLexico(txt)
+funciones.reporteTokens(result[0])
+funciones.reporteErrores(result[1],"","")
 
 # for obj in asm.Operaciones:
 #     print(obj.pop())

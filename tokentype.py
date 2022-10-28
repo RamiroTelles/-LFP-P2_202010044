@@ -1,17 +1,22 @@
 from enum import Enum
 
 class tokentype(Enum):
-    letras = 1001
+    menor = 1001
     mayor = 1002
-    corcheteAbre = 1003
-    corcheteCierre = 1004
-    menor = 1005
-    igual = 1006
-    numero = 1007
-    slash = 1008
-    cadena = 1009
-    decimal=1010
-    final =1011
-    
+    puntoComa = 1003
+    guion = 1004
+    admiracion = 1005
+    parAbre = 1006
+    parCierra = 1007
+    punto = 1008
+    decimal = 1009
+    coma = 1010
+    PalabraReservada = 1011
+    id = 1012
+    cadena = 1013
+    natural = 1014
+    comentarioL = 1015
+    comentarioM = 1016
+
     
         

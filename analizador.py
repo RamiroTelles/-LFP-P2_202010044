@@ -32,6 +32,7 @@ class analizador():
         fila=1
         errores=[]
         tokens= []
+        coments=[]
         i=0
         actual=""
         long = len(texto)
@@ -39,66 +40,98 @@ class analizador():
             actual=texto[i]
 
             if estado==0:
-                if actual.isalpha():
+                if actual=="<":
                     lexema+=actual
-                    estado=7
-                    i+=1
-                    columna+=1
-                    continue
-                if actual.isdigit():
-                    lexema+=actual
-                    estado=15
-                    i+=1
-                    columna+=1
-                    continue
-                elif actual=="/":
-                    lexema+= actual
-                    tokens.append(token(tokentype.slash,lexema,fila,columna))
-                    lexema=""
-                    i+=1
-                    columna+=1
-                    continue
-                elif actual=="=":
-                    lexema+= actual
-                    tokens.append(token(tokentype.igual,lexema,fila,columna))
-                    lexema=""
-                    i+=1
-                    columna+=1
-                    continue
-                elif actual == '[':
-                    lexema+= actual
-                    tokens.append(token(tokentype.corcheteAbre,lexema,fila,columna))
-                    lexema=""
-                    i+=1
-                    columna+=1
-                    continue
-                elif actual== '<':
-                    lexema+=actual
+                    
+                    
                     tokens.append(token(tokentype.menor,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                if actual==">":
+                    lexema+=actual
+                    
+                    
+                    tokens.append(token(tokentype.mayor,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual==";":
+                    lexema+= actual
+                    tokens.append(token(tokentype.puntoComa,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual=="-":
+                    lexema+= actual
+                    tokens.append(token(tokentype.guion,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual == '!':
+                    lexema+= actual
+                    tokens.append(token(tokentype.admiracion,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual== '(':
+                    lexema+=actual
+                    tokens.append(token(tokentype.parAbre,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual== ')':
+                    lexema+=actual
+                    tokens.append(token(tokentype.parCierra,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual== '.':
+                    lexema+=actual
+                    tokens.append(token(tokentype.punto,lexema,fila,columna))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual== ',':
+                    lexema+=actual
+                    tokens.append(token(tokentype.coma,lexema,fila,columna))
                     lexema=""
                     i+=1
                     columna+=1
                     continue
                 elif actual=='\"':
                     lexema+=actual
-                    estado= 8
+                    estado= 5
                     i+=1
                     columna+=1
                     continue
-                elif actual=='>':
+                elif actual.isalpha():
+                    estado=4
                     lexema+=actual
-                    tokens.append(token(tokentype.mayor,lexema,fila,columna))
-                    lexema=""
                     i+=1
                     columna+=1
                     continue
-                elif actual==']':
+                elif actual.isdigit():
+                    estado=3
                     lexema+=actual
-                    tokens.append(token(tokentype.corcheteCierre,lexema,fila,columna))
-                    lexema=""
                     i+=1
                     columna+=1
                     continue
+                elif actual=="/":
+                    estado=6
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+
                 elif actual=='\n':
                     fila+=1
                     i+=1
@@ -120,21 +153,10 @@ class analizador():
                     i+=1
                     columna+=1
                     continue
-            elif estado==7:
-                if actual.isalpha() or actual=="," or actual=="." or actual==":" or actual==";":
-                    lexema+=actual
-                    i+=1
-                    columna+=1
-                    continue
-                else:
-                    tokens.append(token(tokentype.letras,lexema,fila,columna-len(lexema)))
-                    lexema=""
-                    estado=0
-                    continue
-            elif estado == 8 :
+            elif estado==5:
                 if actual=="\"":
-                    estado=0
                     lexema+=actual
+                    estado=0
                     tokens.append(token(tokentype.cadena,lexema,fila,columna-len(lexema)))
                     lexema=""
                     i+=1
@@ -146,69 +168,210 @@ class analizador():
                     columna=1
                     fila+=1
                     continue
+                elif actual=="\t" or actual=="\r":
+                    lexema+=actual
+                    i+=1
+                    columna+=4
+                    continue
                 else:
+    
                     lexema+=actual
                     i+=1
                     columna+=1
                     continue
-            elif estado ==15:
+            elif estado==4:
+                if actual.isalpha():
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual.isdigit():
+                    estado=8
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                else:
+                    if self.buscarReservada(lexema):
+                        tokens.append(token(tokentype.PalabraReservada,lexema,fila,columna-len(lexema)))
+                    else:
+                        tokens.append(token(tokentype.id,lexema,fila,columna-len(lexema)))
+                    lexema=""
+                    estado=0
+                    
+
+                    #comprobar si es palabra reservada, sino guardarlo como id
+                    #lexema+=actual
+                    #i+=1
+                    #columna+=1
+                    continue
+            elif estado==8:
+                if actual.isalpha() or actual.isdigit():
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                else:
+                    tokens.append(token(tokentype.id,lexema,fila,columna-len(lexema)))
+                    lexema=""
+                    estado=0
+                    continue
+            elif estado==3:
                 if actual.isdigit():
                     lexema+=actual
                     i+=1
                     columna+=1
                     continue
                 elif actual==".":
-                    estado=16
+                    estado=7
                     lexema+=actual
                     i+=1
                     columna+=1
                     continue
                 else:
                     estado=0
-                    tokens.append(token(tokentype.numero,lexema,fila,columna-len(lexema)))
+                    tokens.append(token(tokentype.natural,lexema,fila,columna-len(lexema)))
                     lexema=""
                     continue
-            elif estado ==16:
-                if actual.isdigit():
-                    estado=17
-                    lexema+=actual
-                    columna+=1
-                    i+=1
-                    continue
-                else:
-                    errores.append(erroR(lexema,columna-len(lexema),fila))
-                    lexema=""
-                    estado=0
-                    continue
-            elif estado==17:
+            elif estado==7:
                 if actual.isdigit():
                     lexema+=actual
                     i+=1
                     columna+=1
+                    estado=11
                     continue
                 else:
+                    errores.append(erroR(lexema,fila,columna-len(lexema)))
+                    lexema=""
                     estado=0
+                    continue
+            elif estado==11:
+                if actual.isdigit():
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                else:
                     tokens.append(token(tokentype.decimal,lexema,fila,columna-len(lexema)))
+                    estado=0
                     lexema=""
                     continue
+
+            elif estado ==6:
+                if actual=="*":
+                    estado=10
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual=="/":
+                    estado=9
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                else:
+                    errores.append(erroR(lexema,fila,columna))
+                    lexema=""
+                    estado=0
+                    continue
+            elif estado==10:
+                if actual=="*":
+                    estado=12
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+                elif actual=="\n":
+                    lexema+=actual
+                    i+=1
+                    columna=1
+                    fila+=1
+                    continue
+                elif actual=="\t" or actual=='\r':
+                    lexema+=actual
+                    i+=1
+                    columna+=4
+                    
+                    continue
+                else:
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+            elif estado==12:
+                if actual=="/":
+                    lexema+=actual
+                    coments.append(token(tokentype.comentarioM,lexema,fila,columna-len(lexema)))
+                    lexema=""
+                    i+=1
+                    columna+=1
+                    estado=0
+                    continue
+                elif actual=="\n":
+                    estado=10
+                    lexema+=actual
+                    i+=1
+                    columna=1
+                    fila+=1
+                    continue
+                elif actual=="\t" or actual=='\r':
+                    estado=10
+                    lexema+=actual
+                    i+=1
+                    columna+=4
+                    
+                    continue
+                else:
+                    estado=10
+                    lexema+=actual
+                    i+=1
+                    columna+=4
+                    continue
+            elif estado==9:
+                if actual=="\t" or actual=='\r':
+                    lexema+=actual
+                    i+=1
+                    columna+=4
+                    continue
+                elif actual=="\n":
+                    
+                    coments.append(token(tokentype.comentarioL,lexema,fila,columna-len(lexema)))
+                    lexema=""
+                    estado=0
+                    i+=1
+                    columna=1
+                    fila+=1
+                    continue
+                else:
+                    lexema+=actual
+                    i+=1
+                    columna+=1
+                    continue
+
+
+
+
+
 
 
 
 
             
-#        if estado==6 or estado == 12:
-#            #print("Se esperaba un \" o un \' para finalizar la cadena")
-#            errores+="Se esperaba un \" o un \' para finalizar la cadena"
+        if estado==10 or estado == 12:
+            errores.append(erroR(lexema,fila,columna-len(lexema)))
+            
         resultados = []
         resultados.append(tokens)
         resultados.append(errores)
+        resultados.append(coments)
         return resultados
 
     def cargarArchivo(self):
         Tk().withdraw()
         txt=""
         try:
-            path = askopenfilename(filetypes=[('.lfp','*.lfp'),('*.*','*.*')])
+            path = askopenfilename(filetypes=[('.gpw','*.gpw'),('*.*','*.*')])
             #print(path)
             self.abierto=path
             with open(path,encoding='utf-8') as file:
@@ -278,39 +441,57 @@ class analizador():
 <tbody>'''
         for obj in tokens:
 
-            if obj.type == tokentype.letras:
+            if obj.type == tokentype.menor:
 
-                txt+= "<tr> <th> letras:1001</th>\n"
-            
-            elif obj.type == tokentype.corcheteAbre:
-
-                txt+= "<tr> <th> corcheteAbre:1003</th>\n"
-            elif obj.type == tokentype.menor:
-
-                txt+= "<tr> <th> menor:1005</th>\n"
-            
-            elif obj.type == tokentype.cadena:
-
-                txt+= "<tr> <th> cadena:1009</th>\n"
+                txt+= "<tr> <th> menor:1001</th>\n"
             
             elif obj.type == tokentype.mayor:
 
                 txt+= "<tr> <th> mayor:1002</th>\n"
-            elif obj.type == tokentype.corcheteCierre:
+            elif obj.type == tokentype.puntoComa:
 
-                txt+= "<tr> <th> corcheteCierre:1004</th>\n"
-            elif obj.type == tokentype.igual:
+                txt+= "<tr> <th> puntoCOma:1003</th>\n"
+            
+            elif obj.type == tokentype.guion:
 
-                txt+= "<tr> <th> igual:1006</th>\n"
-            elif obj.type == tokentype.numero:
+                txt+= "<tr> <th> guion:1004</th>\n"
+            
+            elif obj.type == tokentype.admiracion:
 
-                txt+= "<tr> <th> numero:1007</th>\n"
-            elif obj.type == tokentype.slash:
+                txt+= "<tr> <th> admiracion:1005</th>\n"
+            elif obj.type == tokentype.parAbre:
 
-                txt+= "<tr> <th> slash:1008</th>\n"  
+                txt+= "<tr> <th> ParentesisAbre:1006</th>\n"
+            elif obj.type == tokentype.parCierra:
+
+                txt+= "<tr> <th> ParentesisCierra:1007</th>\n"
+            elif obj.type == tokentype.punto:
+
+                txt+= "<tr> <th> punto:1008</th>\n"
             elif obj.type == tokentype.decimal:
 
-                txt+= "<tr> <th> decimal:1010</th>\n"               
+                txt+= "<tr> <th> decimal:1009</th>\n"  
+            elif obj.type == tokentype.coma:
+
+                txt+= "<tr> <th> coma:1010</th>\n"
+            elif obj.type == tokentype.PalabraReservada:
+
+                txt+= "<tr> <th> PalabraReservada:1011</th>\n" 
+            elif obj.type == tokentype.id:
+
+                txt+= "<tr> <th> id:1012</th>\n" 
+            elif obj.type == tokentype.cadena:
+
+                txt+= "<tr> <th> cadena:1013</th>\n" 
+            elif obj.type == tokentype.natural:
+
+                txt+= "<tr> <th> natural:1014</th>\n" 
+            elif obj.type == tokentype.comentarioL:
+
+                txt+= "<tr> <th> comentario:1015</th>\n" 
+            elif obj.type == tokentype.comentarioM:
+
+                txt+= "<tr> <th> comentario:1016</th>\n"                
 
             
             txt+="<th> "+ str(obj.lexema)+ "</th>\n"
@@ -360,7 +541,7 @@ class analizador():
                         <th>Tipo</th>
                         <th>Columna</th>
                         <th>Fila</th>
-                        
+                        <th>Tipo de Error</th>
                     </tr>
                 </thead>
     <tbody>'''
@@ -371,59 +552,35 @@ class analizador():
             txt+="<th> " + "Error" + "</th>\n"
             txt+="<th> " + str(obj.columna)+ "</th>\n"
             txt+="<th> " + str(obj.fila)+ "</th>\n"
-                    
+            txt+="<th> Lexico </th>\n"    
             #txt+= "<tr> <th> "+ obj + "</th>\n"
         
             txt+="</tr>"
-        
+        for obj in erroresSintacticos:
+
+            txt+="<tr> "
+            txt+="<th> " + str(i)+ "</th>\n"
+            txt+="<th> " + obj.lexema+ "</th>\n"
+            txt+="<th> " + "Error" + "</th>\n"
+            txt+="<th> " + str(obj.columna)+ "</th>\n"
+            txt+="<th> " + str(obj.fila)+ "</th>\n"
+            txt+="<th> Sintactico </th>\n"
+
+            txt+="</tr>"
+
+
+
         txt+= '''
             </tbody>
         </table>
-        <hr>
-        <hr>
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        Errores Sintacticos
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
+       
+        
 
             '''
-        filas = erroresSintacticos.split('\n')
-        for obj in filas:
-                    
-            txt+= "<tr> <th colspan=\"4\"> "+ obj + "</th>\n"
         
-            txt+="</tr>"
-        txt+= '''
-            </tbody>
-        </table>
-        <hr>
-        <hr>
-        <table>
-            <thead>
-                <tr>
-                    <th>
-                        Errores Semanticos
-                    </th>
-                </tr>
-            </thead>
-            <tbody>
-
-            '''
-        filas = erroresSemanticos.split('\n')
-        for obj in filas:
-                    
-            txt+= "<tr> <th> "+ obj + "</th>\n"
-        
-            txt+="</tr>"
 
         txt+='''
-                </tbody>
-            </table>
+              
     </div>
         
 
@@ -441,6 +598,55 @@ class analizador():
         except:
             print("No se pudo generar el reporte de errores")
 
+
+
+    def buscarReservada(self,lexema):
+        if lexema == "Controles":
+            return True
+        elif lexema == "Etiqueta":
+            return True
+        elif lexema == "Boton":
+            return True
+        elif lexema == "Check":
+            return True
+        elif lexema == "RadioBoton":
+            return True
+        elif lexema == "Texto":
+            return True
+        elif lexema == "AreaTexto":
+            return True
+        elif lexema == "Clave":
+            return True
+        elif lexema == "Contenedor":
+            return True
+        elif lexema == "propiedades":
+            return True
+        elif lexema == "setColorLetra":
+            return True
+        elif lexema == "setTexto":
+            return True
+        elif lexema == "setAlineacion":
+            return True
+        elif lexema == "setColorFondo":
+            return True
+        elif lexema == "setMarcada":
+            return True
+        elif lexema == "setGrupo":
+            return True
+        elif lexema == "setAncho":
+            return True
+        elif lexema == "setAlto":
+            return True
+        elif lexema == "add":
+            return True
+        elif lexema == "Colocacion":
+            return True
+        elif lexema == "this":
+            return True
+        elif lexema == "setPosicion":
+            return True
+        else:
+            return False
 
 #     def generarResultados(self,titulo,t_color,t_tamaño,descripcion,d_color,d_tamaño,Operaciones,o_color,o_tamaño):
 #         css=""

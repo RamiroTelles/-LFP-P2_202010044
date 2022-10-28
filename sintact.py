@@ -9,7 +9,7 @@ class analSitac():
         self.tokens = tokens
         self.tokens.append(token(tokentype.final,"#",0,0))
         self.pos=0
-        self.errores =""
+        self.errores =[]
         self.txt =""
         self.title=""
         self.titleColor=""
