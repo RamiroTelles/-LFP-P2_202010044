@@ -1,0 +1,29 @@
+Gramática Analisis Sintáctico
+
+Entrada-> CONTROLES Entrada
+		 | PROPIEDADES Entrada
+		 | COLOCACION Entrada
+         | e
+
+CONTROLES -> <!--Controles DEFINICION Controles-->
+
+DEFINICION -> PalabraReservada Id; DEFINICION
+			  | e
+
+PROPIEDADES -> <!--propiedades INSTRUCCION propiedades-->
+				
+INSTRUCCION ->  id.PalabraReservada(VALORES); INSTRUCCION
+				| PalabraReservada.PalabraReservada(VALORES); INSTRUCCION
+				| e
+
+VALORES->  VALOR REPETIR
+		    
+REPETIR -> , VALOR REPETIR
+		     | e 
+
+VALOR-> Cadena
+		| Natural
+		| PalabraReservada
+		| Id
+
+COLOCACION -> <!--Colocacion INSTRUCCION Colocacion -->

@@ -17,6 +17,7 @@ class tokentype(Enum):
     natural = 1014
     comentarioL = 1015
     comentarioM = 1016
+    final = 1017
 
     
         

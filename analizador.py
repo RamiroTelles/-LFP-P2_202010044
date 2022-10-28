@@ -148,7 +148,7 @@ class analizador():
                 else:
                     #print("Simbolo " + actual + " no reconocido")
                     lexema+=actual
-                    errores.append(erroR(lexema,columna,fila))
+                    errores.append(erroR(lexema,columna,fila,"Se esperaba otro simbolo","Expresion invalida"))
                     lexema=""
                     i+=1
                     columna+=1
@@ -241,7 +241,7 @@ class analizador():
                     estado=11
                     continue
                 else:
-                    errores.append(erroR(lexema,fila,columna-len(lexema)))
+                    errores.append(erroR(lexema,fila,columna-len(lexema),"Se esperaba un digito","Expresion invalida"))
                     lexema=""
                     estado=0
                     continue
@@ -271,7 +271,7 @@ class analizador():
                     columna+=1
                     continue
                 else:
-                    errores.append(erroR(lexema,fila,columna))
+                    errores.append(erroR(lexema,fila,columna,"Se esperaba un / o *","Expresion invalida"))
                     lexema=""
                     estado=0
                     continue
@@ -359,7 +359,7 @@ class analizador():
 
             
         if estado==10 or estado == 12:
-            errores.append(erroR(lexema,fila,columna-len(lexema)))
+            errores.append(erroR(lexema,fila,columna-len(lexema),"Se esperaba un *","Expresion invalida"))
             
         resultados = []
         resultados.append(tokens)
@@ -420,6 +420,7 @@ class analizador():
         
 
     def reporteTokens(self,tokens):
+        i=0
         txt = '''
 <html>
     <head>
@@ -432,73 +433,130 @@ class analizador():
         <table>
             <thead>
                 <tr>
+                    <th>Correlativo</th>
                     <th>Tipo token</th>
+                    <th>Numero Token</th>
                     <th>Lexema</th>
-                    <th>Fila</th>
-                    <th>Columna</th>
+                    
                 </tr>
             </thead>
 <tbody>'''
         for obj in tokens:
+            txt+="<tr> "
+            txt+="<th> "+ str(i) + "<th>\n"
 
             if obj.type == tokentype.menor:
 
-                txt+= "<tr> <th> menor:1001</th>\n"
+                txt+= "<th> menor</th>\n"
             
             elif obj.type == tokentype.mayor:
 
-                txt+= "<tr> <th> mayor:1002</th>\n"
+                txt+= "<th> mayor</th>\n"
             elif obj.type == tokentype.puntoComa:
 
-                txt+= "<tr> <th> puntoCOma:1003</th>\n"
+                txt+= "<th> puntoCOma</th>\n"
             
             elif obj.type == tokentype.guion:
 
-                txt+= "<tr> <th> guion:1004</th>\n"
+                txt+= "<th> guion</th>\n"
             
             elif obj.type == tokentype.admiracion:
 
-                txt+= "<tr> <th> admiracion:1005</th>\n"
+                txt+= "<th> admiracion</th>\n"
             elif obj.type == tokentype.parAbre:
 
-                txt+= "<tr> <th> ParentesisAbre:1006</th>\n"
+                txt+= "<th> ParentesisAbre</th>\n"
             elif obj.type == tokentype.parCierra:
 
-                txt+= "<tr> <th> ParentesisCierra:1007</th>\n"
+                txt+= "<th> ParentesisCierra</th>\n"
             elif obj.type == tokentype.punto:
 
-                txt+= "<tr> <th> punto:1008</th>\n"
+                txt+= "<th> punto</th>\n"
             elif obj.type == tokentype.decimal:
 
-                txt+= "<tr> <th> decimal:1009</th>\n"  
+                txt+= "<th> decimal</th>\n"  
             elif obj.type == tokentype.coma:
 
-                txt+= "<tr> <th> coma:1010</th>\n"
+                txt+= "<th> coma</th>\n"
             elif obj.type == tokentype.PalabraReservada:
 
-                txt+= "<tr> <th> PalabraReservada:1011</th>\n" 
+                txt+= "<th> PalabraReservada</th>\n" 
             elif obj.type == tokentype.id:
 
-                txt+= "<tr> <th> id:1012</th>\n" 
+                txt+= "<th> id</th>\n" 
             elif obj.type == tokentype.cadena:
 
-                txt+= "<tr> <th> cadena:1013</th>\n" 
+                txt+= "<th> cadena</th>\n" 
             elif obj.type == tokentype.natural:
 
-                txt+= "<tr> <th> natural:1014</th>\n" 
+                txt+= "<th> natural</th>\n" 
             elif obj.type == tokentype.comentarioL:
 
-                txt+= "<tr> <th> comentario:1015</th>\n" 
+                txt+= "<th> comentario</th>\n" 
             elif obj.type == tokentype.comentarioM:
 
-                txt+= "<tr> <th> comentario:1016</th>\n"                
+                txt+= "<th> comentario</th>\n"
+
+
+
+            if obj.type == tokentype.menor:
+
+                txt+= "<th> 1001</th>\n"
+            
+            elif obj.type == tokentype.mayor:
+
+                txt+= "<th> 1002</th>\n"
+            elif obj.type == tokentype.puntoComa:
+
+                txt+= "<th> 1003</th>\n"
+            
+            elif obj.type == tokentype.guion:
+
+                txt+= "<th> 1004</th>\n"
+            
+            elif obj.type == tokentype.admiracion:
+
+                txt+= "<th> 1005</th>\n"
+            elif obj.type == tokentype.parAbre:
+
+                txt+= "<th> 1006</th>\n"
+            elif obj.type == tokentype.parCierra:
+
+                txt+= "<th> 1007</th>\n"
+            elif obj.type == tokentype.punto:
+
+                txt+= "<th> 1008</th>\n"
+            elif obj.type == tokentype.decimal:
+
+                txt+= "<th> 1009</th>\n"  
+            elif obj.type == tokentype.coma:
+
+                txt+= "<th> 1010</th>\n"
+            elif obj.type == tokentype.PalabraReservada:
+
+                txt+= "<th> 1011</th>\n" 
+            elif obj.type == tokentype.id:
+
+                txt+= "<th> 1012</th>\n" 
+            elif obj.type == tokentype.cadena:
+
+                txt+= "<th> 1013</th>\n" 
+            elif obj.type == tokentype.natural:
+
+                txt+= "<th> 1014</th>\n" 
+            elif obj.type == tokentype.comentarioL:
+
+                txt+= "<th> 1015</th>\n" 
+            elif obj.type == tokentype.comentarioM:
+
+                txt+= "<th> 1016</th>\n"                
 
             
             txt+="<th> "+ str(obj.lexema)+ "</th>\n"
-            txt+="<th> "+ str(obj.fila)+ "</th>\n"
-            txt+="<th> "+ str(obj.columna)+ "</th>\n"
+           
             
             txt+="</tr>"
+            i+=1
         txt+='''
             </tbody>
         </table>
@@ -536,35 +594,43 @@ class analizador():
             <table>
                 <thead>
                     <tr>
-                        <th>No.</th>
-                        <th>Lexema</th>
-                        <th>Tipo</th>
-                        <th>Columna</th>
-                        <th>Fila</th>
                         <th>Tipo de Error</th>
+                        
+                        
+                        <th>Fila</th>
+                        <th>Columna</th>
+                        <th>Valor Esperado</th>
+                        <th>Descripcion</th>
+                        
+                        
                     </tr>
                 </thead>
     <tbody>'''
         for obj in erroreslexicos:
             txt+="<tr> "
-            txt+="<th> " + str(i)+ "</th>\n"
-            txt+="<th> " + obj.lexema+ "</th>\n"
-            txt+="<th> " + "Error" + "</th>\n"
-            txt+="<th> " + str(obj.columna)+ "</th>\n"
+            txt+="<th> Lexico </th>\n" 
+            
             txt+="<th> " + str(obj.fila)+ "</th>\n"
-            txt+="<th> Lexico </th>\n"    
+            txt+="<th> " + str(obj.columna)+ "</th>\n"
+            txt+="<th> " + obj.esperado+ "</th>\n"
+            txt+="<th> " + obj.desc+ "</th>\n"
+               
             #txt+= "<tr> <th> "+ obj + "</th>\n"
         
             txt+="</tr>"
         for obj in erroresSintacticos:
 
+            
             txt+="<tr> "
-            txt+="<th> " + str(i)+ "</th>\n"
-            txt+="<th> " + obj.lexema+ "</th>\n"
-            txt+="<th> " + "Error" + "</th>\n"
-            txt+="<th> " + str(obj.columna)+ "</th>\n"
-            txt+="<th> " + str(obj.fila)+ "</th>\n"
             txt+="<th> Sintactico </th>\n"
+           
+        
+            
+            txt+="<th> " + str(obj.fila)+ "</th>\n"
+            txt+="<th> " + str(obj.columna)+ "</th>\n"
+            txt+="<th> " + obj.esperado+ "</th>\n"
+            txt+="<th> " + obj.desc+ "</th>\n"
+            
 
             txt+="</tr>"
 
