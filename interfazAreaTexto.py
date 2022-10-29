@@ -9,6 +9,7 @@ from tkinter import ttk
 from analizador import analizador
 from os import startfile
 from sintact import analSitac
+from generadorForm import generadorForm
 
 #from matplotlib.pyplot import text
 
@@ -17,6 +18,7 @@ class interfazAreaTexto():
     
     def __init__(self) -> None:
         self.funciones = analizador()
+        self.generador= generadorForm()
       
         
         def cargarArchivo():
@@ -50,7 +52,8 @@ class interfazAreaTexto():
             self.funciones.reporteTokens(result1[0])
             asm= analSitac(result1[0])
             self.funciones.reporteErrores(result1[1],asm.errores,"")
-
+            self.generador.crearCSS(asm.etiquetas,asm.botones,asm.checks,asm.radiobotones,asm.cTextos,asm.cAreaTextos,asm.cClaves,asm.contenedores)
+            self.generador.crearHTML(asm.etiquetas,asm.botones,asm.checks,asm.radiobotones,asm.cTextos,asm.cAreaTextos,asm.cClaves,asm.contenedores)
             pass
         
         def mostrarErrores():

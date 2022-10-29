@@ -388,7 +388,7 @@ class analizador():
         Tk().withdraw()
         if self.abierto=="":
             try:
-                path = asksaveasfilename(filetypes=[('.lfp',"*.lfp"),("*.*","*.*")])
+                path = asksaveasfilename(filetypes=[('.gpw',"*.gpw"),("*.*","*.*")])
                 path+=".lfp"
                 print(path)
                 self.abierto=path
@@ -711,8 +711,19 @@ class analizador():
             return True
         elif lexema == "setPosicion":
             return True
+        elif lexema == "Centro":
+            return True
+        elif lexema == "Izquierdo":
+            return True
+        elif lexema == "Derecho":
+            return True
+        elif lexema == "true":
+            return True
+        elif lexema == "false":
+            return True
         else:
             return False
+
 
 #     def generarResultados(self,titulo,t_color,t_tamaño,descripcion,d_color,d_tamaño,Operaciones,o_color,o_tamaño):
 #         css=""

@@ -1,6 +1,15 @@
 
 
+from tkinter.messagebox import NO
 from Eltoken import token
+from contenedor import contenedor
+from boton import boton
+from cAreaTexto import cAreaTexto
+from cClave import cClave
+from check import check
+from cTexto import cTexto
+from etiqueta import etiqueta
+from radioboton import radioboton
 from tokentype import tokentype
 from errores import erroR
 
@@ -13,6 +22,16 @@ class analSitac():
         self.pos=0
         self.errores =[]
         self.final= False
+        self.etiquetas=[]
+        self.botones=[]
+        self.checks=[]
+        self.radiobotones=[]
+        self.cTextos=[]
+        self.cAreaTextos=[]
+        self.cClaves=[]
+        self.contenedores=[]
+        #self.body= contenedor("this",0,0,[255,255,255])
+        
         # self.txt =""
         # self.title=""
         # self.titleColor=""
@@ -149,6 +168,42 @@ class analSitac():
             return None
         if self.tokens[self.pos].lexema =="Controles":
             return None
+
+        if self.tokens[self.pos].lexema =="Contenedor":
+            self.contenedores.append(contenedor(self.tokens[self.pos+1].lexema,100,25,[255,255,255]))
+            #crear contenedor
+            pass
+        elif self.tokens[self.pos].lexema =="Etiqueta":
+            self.etiquetas.append(etiqueta(self.tokens[self.pos+1].lexema,[0,0,0],"",[0,0,0]))
+            #crear etiqueta
+            pass
+        elif self.tokens[self.pos].lexema =="Boton":
+            self.botones.append(boton(self.tokens[self.pos+1].lexema,"","Izquierda"))
+            #crear Boton
+            pass
+        elif self.tokens[self.pos].lexema =="Check":
+            self.checks.append(check(self.tokens[self.pos+1].lexema,"",False,"defaultC"))
+            #crear Check
+            pass
+        elif self.tokens[self.pos].lexema =="RadioBoton":
+            self.radiobotones.append(radioboton(self.tokens[self.pos+1].lexema,"",False,"defaultR"))
+            #crear RadioBoton
+            pass
+        elif self.tokens[self.pos].lexema =="Texto":
+            self.cTextos.append(cTexto(self.tokens[self.pos+1].lexema,"","Izquierda"))
+            #crear ctexto
+            pass
+        elif self.tokens[self.pos].lexema =="AreaTexto":
+            self.cAreaTextos.append(cAreaTexto(self.tokens[self.pos+1].lexema,""))
+            #crear AreaTexto
+            pass
+        elif self.tokens[self.pos].lexema =="Clave":
+            self.cClaves.append(cClave(self.tokens[self.pos+1].lexema,"","Izquierda"))
+            #crear cClave
+            pass
+
+
+
         self.match(tokentype.PalabraReservada)
         self.match(tokentype.id)
         self.match(tokentype.puntoComa)
@@ -175,19 +230,25 @@ class analSitac():
         if self.tokens[self.pos].lexema =="propiedades" or self.tokens[self.pos].lexema =="Colocacion":
             return None
         elif self.tokens[self.pos].type == tokentype.PalabraReservada:
+            id=self.tokens[self.pos].lexema
             self.match(tokentype.PalabraReservada)
             self.match(tokentype.punto)
+            funcion=self.tokens[self.pos].lexema
             self.match(tokentype.PalabraReservada)
             self.match(tokentype.parAbre)
+            self.realizarInstruccion(id,funcion)
             self.VALORES()
             self.match(tokentype.parCierra)
             self.match(tokentype.puntoComa)
             self.INSTRUCCION()
         else:
+            id=self.tokens[self.pos].lexema
             self.match(tokentype.id)
             self.match(tokentype.punto)
+            funcion=self.tokens[self.pos].lexema
             self.match(tokentype.PalabraReservada)
             self.match(tokentype.parAbre)
+            self.realizarInstruccion(id,funcion)
             self.VALORES()
             self.match(tokentype.parCierra)
             self.match(tokentype.puntoComa)
@@ -238,6 +299,277 @@ class analSitac():
         self.match(tokentype.mayor)
 
 
+    def realizarInstruccion(self,id,funcion):
+        if funcion == "setColorLetra":
+            valores=[]
+            if self.tokens[self.pos].type == tokentype.natural and self.tokens[self.pos+2].type == tokentype.natural and self.tokens[self.pos+4].type == tokentype.natural:
+                valores.append(int(self.tokens[self.pos].lexema))
+                valores.append(int(self.tokens[self.pos+2].lexema))
+                valores.append(int(self.tokens[self.pos+4].lexema))
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+
+            for eti in self.etiquetas:
+                if id == eti.id:
+                    eti.colorLetra = valores
+                    return None
+                
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+
+            
+        elif funcion == "setTexto":
+            valor=""
+            if self.tokens[self.pos].type == tokentype.cadena:
+                valor = self.tokens[self.pos].lexema
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+            
+            for eti in self.etiquetas:
+                if id == eti.id:
+                    eti.texto = valor
+                    return None
+
+            for obj in self.botones:
+                if id == obj.id:
+                    obj.texto = valor
+                    return None
+            
+            for obj in self.checks:
+                if id == obj.id:
+                    obj.texto = valor
+                    return None
+                
+            for obj in self.radiobotones:
+                if id == obj.id:
+                    obj.texto = valor
+                    return None
+
+            for obj in self.cTextos:
+                if id == obj.id:
+                    obj.texto = valor
+                    return None
+
+            for obj in self.cAreaTextos:
+                if id == obj.id:
+                    obj.texto = valor
+                    return None
+
+            for obj in self.cClaves:
+                if id == obj.id:
+                    obj.texto = valor
+                    return None
+
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            return None
+            
+        elif funcion == "setAlineacion":
+            valor=""
+            if self.tokens[self.pos].lexema == "Izquierdo" or self.tokens[self.pos].lexema == "Centro" or self.tokens[self.pos].lexema == "Derecho":
+                valor = self.tokens[self.pos].lexema
+                pass
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+                
+
+            for obj in self.botones:
+                if id == obj.id:
+                    obj.alineacion = valor
+                    return None
+
+            for obj in self.cTextos:
+                if id == obj.id:
+                    obj.alineacion = valor
+                    return None
+
+            for obj in self.cClaves:
+                if id == obj.id:
+                    obj.alineacion = valor
+                    return None
+            
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            return None
+        elif funcion == "setColorFondo":
+            valores=[]
+            if self.tokens[self.pos].type == tokentype.natural and self.tokens[self.pos+2].type == tokentype.natural and self.tokens[self.pos+4].type == tokentype.natural:
+                valores.append(int(self.tokens[self.pos].lexema))
+                valores.append(int(self.tokens[self.pos+2].lexema))
+                valores.append(int(self.tokens[self.pos+4].lexema))
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+
+            for obj in self.etiquetas:
+                if id == obj.id:
+                    obj.colorFondo = valores
+                    return None
+
+            for obj in self.contenedores:
+                if id == obj.id:
+                    obj.colorFondo = valores
+                    return None
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            
+            return None
+        elif funcion == "setMarcada":
+            valor=""
+            if self.tokens[self.pos].lexema == "true":
+                valor = True
+                pass
+            elif self.tokens[self.pos].lexema == "false":
+                valor = False
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+
+            for obj in self.checks:
+                if id == obj.id:
+                    obj.marcada = valor
+                    return None
+
+            for obj in self.radiobotones:
+                if id == obj.id:
+                    obj.marcada = valor
+                    return None
+                
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            
+            
+            return None
+        elif funcion == "setGrupo":
+            valor =""
+            if self.tokens[self.pos].type == tokentype.id:
+                valor = self.tokens[self.pos].lexema
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+            
+            for obj in self.checks:
+                if id == obj.id:
+                    obj.grupo = valor
+                    return None
+
+            for obj in self.radiobotones:
+                if id == obj.id:
+                    obj.grupo = valor
+                    return None
+                
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            
+
+
+            return None
+        elif funcion == "setAncho":
+            valor =100
+            if self.tokens[self.pos].type == tokentype.natural:
+                valor = int(self.tokens[self.pos].lexema)
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+
+            for obj in self.etiquetas:
+                if id == obj.id:
+                    obj.ancho = valor
+                    return None
+
+            for obj in self.contenedores:
+                if id == obj.id:
+                    obj.ancho = valor
+                    return None
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            
+            
+            return None
+        elif funcion == "setAlto":
+            valor=25
+             
+            if self.tokens[self.pos].type == tokentype.natural:
+                valor = int(self.tokens[self.pos].lexema)
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+
+            for obj in self.etiquetas:
+                if id == obj.id:
+                    obj.ancho = valor
+                    return None
+                    
+            for obj in self.contenedores:
+                if id == obj.id:
+                    obj.aalto = valor
+                    return None
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))
+            
+            return None
+        elif funcion == "add":
+
+            return None
+        elif funcion == "setPosicion":
+            valorx=0
+            valory=0
+            if self.tokens[self.pos].type == tokentype.natural and self.tokens[self.pos+2].type == tokentype.natural:
+                valorx= int(self.tokens[self.pos].lexema)
+                valory=int(self.tokens[self.pos+2].lexema)
+                
+            else:
+                self.errores.append(erroR(self.tokens[self.pos].lexema,self.tokens[self.pos].columna,self.tokens[self.pos].fila,"Se esperaba un valor Válido","Error Semántico"))
+                return None
+
+            for obj in self.etiquetas:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+
+            for obj in self.botones:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+            
+            for obj in self.checks:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+                
+            for obj in self.radiobotones:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+
+            for obj in self.cTextos:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+
+            for obj in self.cAreaTextos:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+
+            for obj in self.cClaves:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+
+            for obj in self.contenedores:
+                if id == obj.id:
+                    obj.x = valorx
+                    obj.y = valory
+                    return None
+
+
+            self.errores.append(erroR(self.tokens[self.pos-3].lexema,self.tokens[self.pos-3].columna,self.tokens[self.pos-3].fila,"Se esperaba una id válida","Error Sintactico"))   
+            return None
+
+        pass
 
 
 

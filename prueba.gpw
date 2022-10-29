@@ -5,7 +5,7 @@
  Clave pswClave; 
  Etiqueta passw; 
  Etiqueta Nombre; 
- Texto Texto0; 
+ Texto JTextField0; 
  Contenedor contlogo2; 
  Contenedor ContLogo1; 
  Contenedor ContBody; 
@@ -26,7 +26,7 @@ contFondo.setAlto(100);
  //#$fin de contFondo 
  //#$inicio de cmdIngresar 
 cmdIngresar.setTexto("Ingresar"); 
-contlogin.add(cmdIngresar); 
+
  //#$fin de cmdIngresar 
  //#$inicio de pswClave 
 pswClave.setTexto(""); 
